@@ -1,0 +1,21 @@
+# 美赛机器学习算法模板依赖包
+
+# 核心机器学习库
+numpy>=1.21.0
+pandas>=1.3.0
+scikit-learn>=1.0.0
+
+# 可视化库
+matplotlib>=3.4.0
+seaborn>=0.11.0
+
+# 可选的高级集成学习库
+xgboost>=1.5.0
+lightgbm>=3.3.0
+
+# 数据处理
+scipy>=1.7.0
+
+# Jupyter支持（用于交互式开发）
+jupyter>=1.0.0
+notebook>=6.4.0
