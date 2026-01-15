@@ -1,0 +1,93 @@
+#1. 模拟退火算法（Simulated Annealing，SA）
+适用：寻找复杂函数的最优解（最简单）。
+
+from sko.SA import SA
+
+# 1. 定义你的目标函数（即你想最小化的指标）
+def objective_function(p):
+    x, y = p
+    return x**2 + y**2  # 示例：求 x^2 + y^2 的最小值
+
+# 2. 初始化退火算法
+sa = SA(func=objective_function, x0=[1, 1], T_max=100, T_min=1e-7, L=300, max_stay_counter=150)
+
+# 3. 执行并获取结果
+best_x, best_y = sa.run()
+print(f'最佳变量: {best_x}, 最小值: {best_y}')
+
+# 4. 可视化（美赛论文加分项）
+import matplotlib.pyplot as plt
+plt.plot(sa.best_y_history)
+plt.title("SA Convergence Curve")
+plt.show()
+
+
+
+#2.粒子群算法（粒子群优化，PSO）
+适用：多维优化参数，例如调整机器学习模型的超参数。
+
+from sko.PSO import PSO
+
+# 1. 定义目标函数
+def demo_func(x):
+    x1, x2 = x
+    return x1**2 + (x2 - 0.05)**2
+
+# 2. 初始化 PSO
+# n_dim: 变量维度; pop: 种群数量; max_iter: 迭代次数; lb/ub: 变量上下界
+pso = PSO(func=demo_func, n_dim=2, pop=40, max_iter=100, lb=[-10, -10], ub=[10, 10])
+
+# 3. 运行
+pso.run()
+print('best_x:', pso.gbest_x, 'best_y:', pso.gbest_y)
+
+# 4. 可视化迭代过程
+plt.plot(pso.gbest_y_hist)
+plt.show()
+
+
+#3. 蚁群算法（Ant Colony Algorithm，ACA）
+适用：专门解决TSP（旅行商问题）或路径规划。
+
+import numpy as np
+from sko.ACA import ACA_TSP
+
+# 1. 准备数据：假设有10个城市的坐标
+num_points = 10
+points_coordinate = np.random.rand(num_points, 2) 
+# 计算距离矩阵
+from scipy import spatial
+distance_matrix = spatial.distance.cdist(points_coordinate, points_coordinate, metric='euclidean')
+
+# 2. 定义目标函数（计算路径总距离）
+def cal_total_distance(routine):
+    num_points, = routine.shape
+    return sum([distance_matrix[routine[i % num_points], routine[(i + 1) % num_points]] for i in range(num_points)])
+
+# 3. 初始化蚁群算法
+aca = ACA_TSP(func=cal_total_distance, n_dim=num_points,
+              size_pop=50, max_iter=200,
+              distance_matrix=distance_matrix)
+
+best_x, best_y = aca.run()
+print(f"最短路径顺序: {best_x}, 最短距离: {best_y}")
+
+
+#4. Dijkstra算法（最短路径）
+对于图论问题，建议直接使用NetworkX库，它是Python处理复杂网络的标配。
+
+import networkx as nx
+
+# 1. 创建图
+G = nx.Graph()
+
+# 2. 添加带权重的边 (起点, 终点, 权重)
+edges = [('A', 'B', 7), ('A', 'C', 9), ('B', 'C', 10), ('B', 'D', 15), ('C', 'D', 11)]
+G.add_weighted_edges_from(edges)
+
+# 3. 使用 Dijkstra 计算最短路径
+path = nx.dijkstra_path(G, source='A', target='D')
+length = nx.dijkstra_path_length(G, source='A', target='D')
+
+print(f"从 A 到 D 的路径: {path}, 距离: {length}")
+
