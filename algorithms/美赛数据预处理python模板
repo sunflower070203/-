@@ -1,0 +1,11 @@
+美赛数据预处理python模板
+标准化Standardization
+归一化Normalization
+主成分分析PCA
+标签编码Label Encodeing
+独热编码One Hot
+过采样Over Sampling
+滑动窗口Sliding Window
+插值Interpolation
+降采样Under-sampling
+特征选择Feature Selection
