@@ -473,9 +473,19 @@ class DataPreprocessor:
                 if method == 'linear':
                     df_interpolated[col] = df_interpolated[col].interpolate(method='linear')
                 elif method == 'polynomial':
-                    df_interpolated[col] = df_interpolated[col].interpolate(method='polynomial', order=2)
+                    # 多项式插值需要至少3个非空值
+                    if df_interpolated[col].notna().sum() >= 3:
+                        df_interpolated[col] = df_interpolated[col].interpolate(method='polynomial', order=2)
+                    else:
+                        print(f"警告: {col} 列数据点过少，使用线性插值代替多项式插值")
+                        df_interpolated[col] = df_interpolated[col].interpolate(method='linear')
                 elif method == 'spline':
-                    df_interpolated[col] = df_interpolated[col].interpolate(method='spline', order=3)
+                    # 样条插值需要至少4个非空值
+                    if df_interpolated[col].notna().sum() >= 4:
+                        df_interpolated[col] = df_interpolated[col].interpolate(method='spline', order=3)
+                    else:
+                        print(f"警告: {col} 列数据点过少，使用线性插值代替样条插值")
+                        df_interpolated[col] = df_interpolated[col].interpolate(method='linear')
                 elif method == 'time':
                     df_interpolated[col] = df_interpolated[col].interpolate(method='time')
                 else:
