@@ -433,10 +433,7 @@ class DataPreprocessor:
             X.append(window.flatten())
             
             # 提取下一时刻的目标值
-            if isinstance(target_idx, int):
-                target_value = values[i + window_size, target_idx]
-            else:
-                target_value = values[i + window_size, target_idx]
+            target_value = values[i + window_size, target_idx]
             y.append(target_value)
         
         X = np.array(X)
@@ -486,7 +483,7 @@ class DataPreprocessor:
                     df_interpolated[col] = df_interpolated[col].interpolate(method='linear')
                 
                 # 对于开头和结尾的NaN，使用前向/后向填充
-                df_interpolated[col] = df_interpolated[col].fillna(method='bfill').fillna(method='ffill')
+                df_interpolated[col] = df_interpolated[col].bfill().ffill()
         
         print(f"插值方法: {method}")
         print(f"处理后缺失值: {df_interpolated[columns].isnull().sum().sum()}")
