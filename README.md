@@ -101,9 +101,17 @@ pip install -r requirements.txt
 12. **数据预处理** (`algorithms/utils/preprocessing.py`)
     - 缺失值处理
     - 特征缩放（标准化、归一化）
-    - 分类变量编码
+    - 主成分分析 (PCA)
+    - 分类变量编码（标签编码、独热编码）
+    - 过采样 (Over Sampling)
+    - 降采样 (Under-sampling)
+    - 滑动窗口 (Sliding Window)
+    - 插值 (Interpolation)
     - 异常值检测和处理
     - 特征选择
+    - **📚 [预处理完整指南](examples/PREPROCESSING_GUIDE.md)**
+    - **⚡ [预处理速查卡](examples/PREPROCESSING_QUICK_REF.md)**
+    - **💡 [10个模板示例](examples/preprocessing_templates.py)**
 
 13. **模型评估** (`algorithms/utils/evaluation.py`)
     - 回归评估指标（MSE、RMSE、MAE、R²）
@@ -189,19 +197,37 @@ metrics = voting_model.evaluate(X_test, y_test)
 ### 4. 数据预处理示例
 
 ```python
-from algorithms.utils import DataPreprocessor, DataExplorer
+from algorithms.utils import DataPreprocessor
 
 # 创建预处理器
 preprocessor = DataPreprocessor()
 
-# 处理缺失值
-data_filled = preprocessor.handle_missing_values(data, strategy='mean')
+# 1. 处理缺失值（插值）
+data_filled = preprocessor.interpolate_missing(data, method='linear')
 
-# 编码分类变量
+# 2. 编码分类变量
 data_encoded = preprocessor.encode_categorical(data_filled, method='onehot')
 
-# 特征缩放
+# 3. 特征缩放（标准化）
 data_scaled = preprocessor.scale_features(data_encoded, method='standard')
+
+# 4. PCA降维
+data_pca = preprocessor.apply_pca(data_scaled, variance_threshold=0.95)
+
+# 5. 过采样（解决类别不平衡）
+X_resampled, y_resampled = preprocessor.oversample(X, y)
+
+# 6. 滑动窗口（时间序列）
+X_window, y_window = preprocessor.create_sliding_window(
+    time_series_data, 
+    window_size=7, 
+    step=1
+)
+
+# 7. 特征选择
+X_selected, selected_features = preprocessor.select_features(
+    X, y, k=10, task_type='regression'
+)
 
 # 移除异常值
 data_clean = preprocessor.remove_outliers(data_scaled, method='iqr', threshold=1.5)
@@ -211,6 +237,8 @@ explorer = DataExplorer()
 explorer.plot_correlation_matrix(data)
 explorer.plot_distributions(data)
 ```
+
+**💡 查看完整的10个预处理模板**: `python examples/preprocessing_templates.py`
 
 ### 5. 模型评估和比较
 
